@@ -1,0 +1,16 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+# local data store
+data/
+
+# logs / os
+*.log
+.DS_Store
+Thumbs.db
+
+# editor / assistant scaffolding notes
+CLAUDE.md
+AGENTS.md
