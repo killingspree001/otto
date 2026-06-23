@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Otto — Telegram assistant bot</title>
+		<style>
+			:root {
+				--ink: #15233a;
+				--paper: #f4f7fb;
+				--brand: #2f6df0;
+				--brand-deep: #1f54c7;
+				--muted: #5a6b85;
+				--line: #dde6f2;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 24px;
+				font-family:
+					ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+				background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, var(--paper) 60%);
+				color: var(--ink);
+			}
+			.card {
+				width: 100%;
+				max-width: 540px;
+				background: #fff;
+				border: 1px solid var(--line);
+				border-radius: 22px;
+				padding: 40px;
+				box-shadow: 0 30px 60px -36px rgba(21, 35, 58, 0.4);
+			}
+			.logo {
+				width: 52px;
+				height: 52px;
+				border-radius: 14px;
+				background: linear-gradient(135deg, var(--brand), #6aa1ff);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 26px;
+			}
+			.pill {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				margin-top: 18px;
+				padding: 6px 12px;
+				border-radius: 999px;
+				background: #e7f6ec;
+				color: #1c7a3d;
+				font-size: 13px;
+				font-weight: 600;
+			}
+			.dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: #21a14a;
+			}
+			h1 {
+				margin: 14px 0 6px;
+				font-size: 28px;
+				letter-spacing: -0.02em;
+			}
+			p {
+				color: var(--muted);
+				line-height: 1.6;
+				margin: 0 0 14px;
+			}
+			.btn {
+				display: inline-block;
+				margin-top: 8px;
+				padding: 12px 22px;
+				border-radius: 999px;
+				background: var(--brand);
+				color: #fff;
+				font-weight: 600;
+				text-decoration: none;
+				transition: background 0.2s;
+			}
+			.btn:hover {
+				background: var(--brand-deep);
+			}
+			.cmds {
+				margin-top: 26px;
+				border-top: 1px solid var(--line);
+				padding-top: 22px;
+				display: grid;
+				gap: 10px;
+			}
+			.cmd {
+				display: flex;
+				gap: 12px;
+				font-size: 14px;
+			}
+			code {
+				background: var(--paper);
+				border: 1px solid var(--line);
+				border-radius: 7px;
+				padding: 2px 8px;
+				font-size: 13px;
+				white-space: nowrap;
+				color: var(--ink);
+			}
+			.cmd span {
+				color: var(--muted);
+			}
+			footer {
+				margin-top: 24px;
+				font-size: 13px;
+				color: var(--muted);
+			}
+		</style>
+	</head>
+	<body>
+		<main class="card">
+			<div class="logo">🤖</div>
+			<div class="pill"><span class="dot"></span> Bot is live</div>
+			<h1>Otto is running.</h1>
+			<p>
+				This is a Telegram assistant bot — there's nothing to use here. Open it
+				in Telegram and start chatting.
+			</p>
+			<p>
+				First time deploying? Click below once to connect Telegram to this
+				deployment, then open your bot and send <code>/start</code>.
+			</p>
+			<a class="btn" href="/api/setup">Connect the bot</a>
+
+			<div class="cmds">
+				<div class="cmd"><code>/weather Lagos</code><span>current weather + forecast</span></div>
+				<div class="cmd"><code>/price btc</code><span>live crypto price</span></div>
+				<div class="cmd"><code>/convert 100 usd ngn</code><span>currency</span></div>
+				<div class="cmd"><code>/define ephemeral</code><span>dictionary</span></div>
+				<div class="cmd"><code>/remind in 2h call mum</code><span>scheduled reminder</span></div>
+				<div class="cmd"><code>/todo add buy milk</code><span>to-do list</span></div>
+			</div>
+
+			<footer>Built with Node.js, Telegraf, Upstash &amp; QStash.</footer>
+		</main>
+	</body>
+</html>
