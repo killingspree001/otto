@@ -1,7 +1,8 @@
 import type { Telegraf } from 'telegraf';
-import { db, nextId } from '../db';
 import { commandArgs } from '../lib/args';
 import { parseReminder, formatWhen } from '../lib/time';
+import { addReminder, getReminder, listReminders, nextId, takeReminder } from '../store';
+import { scheduleDelivery } from '../schedule';
 
 export function registerReminders(bot: Telegraf) {
 	bot.command('remind', async (ctx) => {
@@ -14,15 +15,15 @@ export function registerReminders(bot: Telegraf) {
 		if ('error' in parsed) return ctx.reply(parsed.error);
 		if (!parsed.text) return ctx.reply('What should I remind you about?');
 
-		const id = nextId();
-		db.data.reminders.push({
+		const id = await nextId();
+		await addReminder({
 			id,
 			chatId: ctx.chat.id,
 			text: parsed.text,
 			dueAt: parsed.dueAt,
 			createdAt: Date.now()
 		});
-		await db.write();
+		await scheduleDelivery(id, parsed.dueAt);
 
 		await ctx.reply(`✅ I'll remind you *${formatWhen(parsed.dueAt)}*:\n“${parsed.text}”  (#${id})`, {
 			parse_mode: 'Markdown'
@@ -30,10 +31,7 @@ export function registerReminders(bot: Telegraf) {
 	});
 
 	bot.command('reminders', async (ctx) => {
-		const mine = db.data.reminders
-			.filter((r) => r.chatId === ctx.chat.id)
-			.sort((a, b) => a.dueAt - b.dueAt);
-
+		const mine = await listReminders(ctx.chat.id);
 		if (mine.length === 0) return ctx.reply('No reminders set. Add one: /remind in 1h stretch');
 
 		const lines = mine.map((r) => `*#${r.id}* — ${formatWhen(r.dueAt)} — ${r.text}`);
@@ -46,13 +44,12 @@ export function registerReminders(bot: Telegraf) {
 		const id = Number(commandArgs(ctx));
 		if (!id) return ctx.reply('Usage: /cancel <id>   (see /reminders)');
 
-		const before = db.data.reminders.length;
-		db.data.reminders = db.data.reminders.filter(
-			(r) => !(r.id === id && r.chatId === ctx.chat.id)
-		);
-		if (db.data.reminders.length === before) return ctx.reply(`No reminder #${id} found.`);
+		const existing = await getReminder(id);
+		if (!existing || existing.chatId !== ctx.chat.id) {
+			return ctx.reply(`No reminder #${id} found.`);
+		}
 
-		await db.write();
+		await takeReminder(id);
 		await ctx.reply(`🗑️ Cancelled reminder #${id}.`);
 	});
 }

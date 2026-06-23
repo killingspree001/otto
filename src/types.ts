@@ -11,9 +11,3 @@ export type Todo = {
 	text: string;
 	done: boolean;
 };
-
-export type Data = {
-	reminders: Reminder[];
-	todos: Record<string, Todo[]>;
-	seq: number;
-};

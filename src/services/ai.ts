@@ -1,12 +1,12 @@
-import { config, hasAi } from '../config';
+import { geminiKey, hasAi } from '../config';
 
 export async function askAi(question: string): Promise<string> {
-	if (!hasAi) {
-		return 'AI answers are off. Add a free GEMINI_API_KEY to your .env to enable /ask.';
+	if (!hasAi()) {
+		return 'AI answers are off. Add a free GEMINI_API_KEY to enable /ask.';
 	}
 	try {
 		const res = await fetch(
-			`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${config.geminiKey}`,
+			`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey()}`,
 			{
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },

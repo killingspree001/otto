@@ -1,17 +1,18 @@
 import type { Telegraf } from 'telegraf';
-import { db, nextId, todosFor } from '../db';
 import { commandArgs } from '../lib/args';
+import { getTodos, nextId, saveTodos } from '../store';
 
 export function registerTodos(bot: Telegraf) {
 	bot.command('todo', async (ctx) => {
 		const [sub, ...rest] = commandArgs(ctx).split(/\s+/);
-		const list = todosFor(ctx.chat.id);
+		const chatId = ctx.chat.id;
+		const list = await getTodos(chatId);
 		const text = rest.join(' ').trim();
 
 		if (sub === 'add') {
 			if (!text) return ctx.reply('Usage: /todo add <thing to do>');
-			list.push({ id: nextId(), text, done: false });
-			await db.write();
+			list.push({ id: await nextId(), text, done: false });
+			await saveTodos(chatId, list);
 			return ctx.reply(`📝 Added: ${text}`);
 		}
 
@@ -19,13 +20,15 @@ export function registerTodos(bot: Telegraf) {
 			const item = list[Number(rest[0]) - 1];
 			if (!item) return ctx.reply('Which one? Check /todo list');
 			item.done = true;
-			await db.write();
+			await saveTodos(chatId, list);
 			return ctx.reply(`✅ Done: ${item.text}`);
 		}
 
 		if (sub === 'clear') {
-			db.data.todos[String(ctx.chat.id)] = list.filter((t) => !t.done);
-			await db.write();
+			await saveTodos(
+				chatId,
+				list.filter((t) => !t.done)
+			);
 			return ctx.reply('🧹 Cleared completed items.');
 		}
 

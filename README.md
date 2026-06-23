@@ -5,79 +5,85 @@ ask for the weather, a crypto price or a word definition, convert currencies,
 keep a to-do list, and — the useful part — **set reminders that Otto delivers
 to you at the right time, on its own**.
 
-Built with **Node.js + TypeScript** and **Telegraf**. Scheduling is handled by
-**node-cron**, data is stored in a small local JSON file, and the only thing you
-need to run it is a free bot token.
+It runs **always-on and free** as a serverless bot on Vercel, so once it's
+deployed anyone can open the bot link and use it 24/7 — no machine to keep
+running.
+
+Built with **Node.js + TypeScript** and **Telegraf**. State lives in **Upstash
+Redis**, and reminders are scheduled with **Upstash QStash**, which calls the bot
+back at exactly the right time.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
 | `/weather <city>` | Current weather + a short forecast |
-| `/price <coin>` | Live crypto price (e.g. `btc`, `ethereum`) |
-| `/convert <amount> <from> <to>` | Currency conversion, e.g. `/convert 100 usd ngn` |
+| `/price <coin>` | Live crypto price (`btc`, `ethereum`, …) |
+| `/convert <amount> <from> <to>` | Currency, e.g. `/convert 100 usd ngn` |
 | `/define <word>` | Dictionary meaning and an example |
 | `/remind in 2h <text>` | Reminder after a delay (`90s`, `45m`, `2h`, `1h30m`, `3d`) |
 | `/remind at 18:30 <text>` | Reminder at a clock time |
 | `/reminders` · `/cancel <id>` | List or cancel reminders |
-| `/todo add <text>` · `/todo list` · `/todo done <n>` · `/todo clear` | A to-do list |
+| `/todo add … · list · done <n> · clear` | A to-do list |
 | `/ask <question>` | An AI answer (optional — needs a free Gemini key) |
 
-All of the data commands use **free public APIs with no keys** (Open-Meteo,
-CoinGecko, open.er-api.com, dictionaryapi.dev).
+The data commands use **free public APIs with no keys** (Open-Meteo, CoinGecko,
+open.er-api.com, dictionaryapi.dev).
 
-## Set it up (about 2 minutes)
+## Deploy it always-on (free)
 
-1. **Create a bot.** In Telegram, message **@BotFather**, send `/newbot`, and
-   follow the prompts. It gives you a token like `7123456:AAH...` and a link to
-   your bot (`t.me/your_bot`).
-2. **Add the token.** Copy `.env.example` to `.env` and paste it in:
+You'll need three free things, no credit card anywhere.
 
-   ```
-   BOT_TOKEN=your_token_here
-   GEMINI_API_KEY=        # optional, only for /ask
-   ```
+### 1. Create the bot
+In Telegram, message **@BotFather** → `/newbot` → pick a name and username. It
+gives you a **token** and a link to your bot (`t.me/your_bot`).
 
-3. **Run it.**
+### 2. Create a free Upstash database + scheduler
+At [upstash.com](https://upstash.com) (free, no card):
+- **Redis** → create a database → copy `UPSTASH_REDIS_REST_URL` and
+  `UPSTASH_REDIS_REST_TOKEN`.
+- **QStash** (in the same console) → copy the `QSTASH_TOKEN`.
 
-   ```bash
-   npm install
-   npm run dev
-   ```
+### 3. Deploy to Vercel
+- Push this repo to GitHub and import it at
+  [vercel.com/new](https://vercel.com/new).
+- Add these environment variables:
 
-4. Open your bot in Telegram (the `t.me/...` link from BotFather) and send
-   `/start`. You — or anyone you share the link with — can chat with it live.
+  | Name | Value |
+  | --- | --- |
+  | `BOT_TOKEN` | from BotFather |
+  | `UPSTASH_REDIS_REST_URL` | from Upstash Redis |
+  | `UPSTASH_REDIS_REST_TOKEN` | from Upstash Redis |
+  | `QSTASH_TOKEN` | from Upstash QStash |
+  | `DELIVER_SECRET` | any random string |
+  | `GEMINI_API_KEY` | optional, for `/ask` |
 
-### Optional: AI answers
+- Deploy. Then open **`https://your-app.vercel.app/api/setup` once** in a
+  browser — this connects Telegram to your deployment.
 
-`/ask` uses Google Gemini. Get a free key (no card) at
-[aistudio.google.com/apikey](https://aistudio.google.com/apikey) and put it in
-`.env` as `GEMINI_API_KEY`. Everything else works without it.
+That's it. Open your bot in Telegram, send `/start`, and share the `t.me/...`
+link. It now works 24/7.
 
-## How reminders work
+## Run it locally (optional)
 
-When you set a reminder it’s saved to `data/otto.json` with a due time. A
-node-cron job runs every minute, finds anything due, sends it to you, and
-removes it. Because of this, reminders are delivered for as long as Otto is
-running.
+For development you don't need QStash — the dev server polls for due reminders.
 
-## Running it always-on
+```bash
+cp .env.example .env     # add BOT_TOKEN + the two UPSTASH_REDIS_* values
+npm install
+npm run dev
+```
 
-`npm start` keeps Otto running with long polling — great for a live demo. To
-keep it online 24/7 so a client can use the link anytime, run it on any small
-always-on host (a cheap VPS, or a free Node host). For fully serverless hosting
-you can switch Telegraf to webhook mode and deploy the handler to a platform
-like Vercel; the command code stays the same.
-
-## Project layout
+## How it fits together
 
 ```
-src/
-  index.ts            bot setup + command registration
-  config.ts           env + token check
-  db.ts               local JSON store (lowdb)
-  reminders.ts        node-cron delivery loop
-  commands/           one file per command group
-  services/           weather, crypto, currency, dictionary, ai
-  lib/                arg parsing + reminder time parser
+api/telegram.ts   Telegram webhook → handles every command (always-on)
+api/deliver.ts    QStash calls this at a reminder's due time → sends it
+api/setup.ts      visit once to connect the Telegram webhook
+src/bot.ts        builds the bot and registers commands
+src/store.ts      Upstash Redis: reminders + to-dos
+src/schedule.ts   Upstash QStash: schedule a reminder's delivery
+src/services/     weather, crypto, currency, dictionary, ai
+src/lib/          arg parsing + reminder time parser
+src/dev.ts        local long-polling entry point
 ```
