@@ -11,7 +11,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 		const bot = new Telegraf(getBotToken());
 		await bot.telegram.setWebhook(`${base}/api/telegram`);
 		await bot.telegram.setMyCommands(COMMAND_MENU);
-		await rememberBaseUrl(base);
+		await rememberBaseUrl(base).catch(() => {});
 		res
 			.status(200)
 			.send(`Otto is set up.\nWebhook: ${base}/api/telegram\nOpen your bot in Telegram and send /start.`);

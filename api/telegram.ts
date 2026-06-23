@@ -10,7 +10,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 		return;
 	}
 	try {
-		if (req.headers.host) await rememberBaseUrl(`https://${req.headers.host}`);
+		// Non-fatal: only needed for scheduling, and shouldn't block commands.
+		if (req.headers.host) {
+			await rememberBaseUrl(`https://${req.headers.host}`).catch(() => {});
+		}
 		await bot.handleUpdate(req.body);
 	} catch (err) {
 		console.error('webhook error', err);
