@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import type { Reminder, Todo } from './types';
+import type { Reminder, Todo } from './types.js';
 
 // Lazily created so a missing/empty config doesn't crash the function at import
 // time — it only matters when a reminder or to-do command is actually used.

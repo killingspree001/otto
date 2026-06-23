@@ -1,6 +1,6 @@
 import type { Telegraf } from 'telegraf';
-import { commandArgs } from '../lib/args';
-import { askAi } from '../services/ai';
+import { commandArgs } from '../lib/args.js';
+import { askAi } from '../services/ai.js';
 
 export function registerAi(bot: Telegraf) {
 	bot.command('ask', async (ctx) => {

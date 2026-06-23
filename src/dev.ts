@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { createBot, COMMAND_MENU } from './bot';
-import { dueReminderIds, takeReminder } from './store';
+import { createBot, COMMAND_MENU } from './bot.js';
+import { dueReminderIds, takeReminder } from './store.js';
 
 // Local development: long polling + a simple loop that delivers due reminders
 // (in production, QStash + /api/deliver handle that instead).

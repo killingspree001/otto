@@ -1,8 +1,8 @@
 import type { Telegraf } from 'telegraf';
-import { commandArgs } from '../lib/args';
-import { parseReminder, formatWhen } from '../lib/time';
-import { addReminder, getReminder, listReminders, nextId, takeReminder } from '../store';
-import { scheduleDelivery } from '../schedule';
+import { commandArgs } from '../lib/args.js';
+import { parseReminder, formatWhen } from '../lib/time.js';
+import { addReminder, getReminder, listReminders, nextId, takeReminder } from '../store.js';
+import { scheduleDelivery } from '../schedule.js';
 
 export function registerReminders(bot: Telegraf) {
 	bot.command('remind', async (ctx) => {

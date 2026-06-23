@@ -1,6 +1,6 @@
 import { Client } from '@upstash/qstash';
-import { deliverSecret } from './config';
-import { getBaseUrl } from './store';
+import { deliverSecret } from './config.js';
+import { getBaseUrl } from './store.js';
 
 // When hosted, hand the reminder to QStash, which calls /api/deliver at the due
 // time. Locally (no QSTASH_TOKEN) this is a no-op and the dev polling loop in

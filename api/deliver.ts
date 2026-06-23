@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Telegraf } from 'telegraf';
-import { deliverSecret, getBotToken } from '../src/config';
-import { takeReminder } from '../src/store';
+import { deliverSecret, getBotToken } from '../src/config.js';
+import { takeReminder } from '../src/store.js';
 
 // Called by QStash at a reminder's due time.
 export default async function handler(req: VercelRequest, res: VercelResponse) {

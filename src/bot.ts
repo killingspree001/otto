@@ -1,10 +1,10 @@
 import { Telegraf } from 'telegraf';
-import { getBotToken } from './config';
-import { registerBasic } from './commands/basic';
-import { registerInfo } from './commands/info';
-import { registerReminders } from './commands/reminders';
-import { registerTodos } from './commands/todos';
-import { registerAi } from './commands/ai';
+import { getBotToken } from './config.js';
+import { registerBasic } from './commands/basic.js';
+import { registerInfo } from './commands/info.js';
+import { registerReminders } from './commands/reminders.js';
+import { registerTodos } from './commands/todos.js';
+import { registerAi } from './commands/ai.js';
 
 export const COMMAND_MENU = [
 	{ command: 'help', description: 'Show what Otto can do' },

@@ -1,4 +1,4 @@
-import { geminiKey, hasAi } from '../config';
+import { geminiKey, hasAi } from '../config.js';
 
 export async function askAi(question: string): Promise<string> {
 	if (!hasAi()) {

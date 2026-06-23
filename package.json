@@ -2,6 +2,7 @@
   "name": "otto-bot",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Otto — a friendly Telegram assistant bot with reminders, weather, crypto, currency and AI.",
   "scripts": {
     "dev": "tsx watch src/dev.ts",

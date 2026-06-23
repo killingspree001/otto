@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { Telegraf } from 'telegraf';
-import { createBot } from '../src/bot';
-import { rememberBaseUrl } from '../src/store';
+import { createBot } from '../src/bot.js';
+import { rememberBaseUrl } from '../src/store.js';
 
 let bot: Telegraf | null = null;
 function getBot(): Telegraf {

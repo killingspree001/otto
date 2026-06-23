@@ -1,6 +1,6 @@
 import type { Telegraf } from 'telegraf';
-import { commandArgs } from '../lib/args';
-import { getTodos, nextId, saveTodos } from '../store';
+import { commandArgs } from '../lib/args.js';
+import { getTodos, nextId, saveTodos } from '../store.js';
 
 export function registerTodos(bot: Telegraf) {
 	bot.command('todo', async (ctx) => {

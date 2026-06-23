@@ -1,9 +1,9 @@
 import type { Telegraf } from 'telegraf';
-import { commandArgs } from '../lib/args';
-import { getWeather } from '../services/weather';
-import { getCryptoPrice } from '../services/crypto';
-import { convertCurrency } from '../services/currency';
-import { defineWord } from '../services/dictionary';
+import { commandArgs } from '../lib/args.js';
+import { getWeather } from '../services/weather.js';
+import { getCryptoPrice } from '../services/crypto.js';
+import { convertCurrency } from '../services/currency.js';
+import { defineWord } from '../services/dictionary.js';
 
 export function registerInfo(bot: Telegraf) {
 	bot.command('weather', async (ctx) => {
