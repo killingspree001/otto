@@ -1,8 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { Telegraf } from 'telegraf';
 import { createBot } from '../src/bot';
 import { rememberBaseUrl } from '../src/store';
 
-const bot = createBot();
+let bot: Telegraf | null = null;
+function getBot(): Telegraf {
+	if (!bot) bot = createBot();
+	return bot;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method !== 'POST') {
@@ -14,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 		if (req.headers.host) {
 			await rememberBaseUrl(`https://${req.headers.host}`).catch(() => {});
 		}
-		await bot.handleUpdate(req.body);
+		await getBot().handleUpdate(req.body);
 	} catch (err) {
 		console.error('webhook error', err);
 	}
